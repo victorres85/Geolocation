@@ -10,6 +10,7 @@
         <div class="col-md-4">
             <label>Select Km</label>
             <select class="form-control" v-model="km">
+                <option value="any">Any</option>
                 <option value="1">1 KM</option>
                 <option value="2">2 KM</option>
                 <option value="5">5 KM</option>
@@ -22,14 +23,15 @@
         </div>
     </div>
 
-    <div class="row mt-5 pt-5">
+    <div class="row mt-5 pt-5" >
         <div class="col-md-4" v-for="restaurant in restaurants">
             <div class="card shadow-lg m-3" style="width: 18rem;">
                 <img :src="restaurant.image"
                     class="card-img-top" alt=".." style="height:200px">
                 <div class="card-body">
                     <h5 class="card-title">[[restaurant.name]] </h5>
-                    <p class="card-text">[[(restaurant.description).substring(0 , 40)]]</p>
+                    <p class="card-text">[[(restaurant.description)]]</p>
+                    <p class="card-text"><strong>pincode:</strong></br>[[(restaurant.pincode)]]</p>
                     <a href="#" class="btn btn-primary">[[restaurant.distance]] KM</a>
                 </div>
             </div>
@@ -37,7 +39,6 @@
     </div>
 </div>
 </div>
-
 </div>
 
 
@@ -50,7 +51,7 @@
         data() {
             return {
                 pincode : '',
-                km : '',
+                km : 'any',
                 tasks: [],
                 restaurants : []
             }
@@ -65,7 +66,7 @@
                     return;
                 }
                 
-                fetch(`/home/api/get/?pincode=${this.pincode}&km=${this.km}`)
+                fetch(`api/get/?pincode=${this.pincode}&km=${this.km}`)
                 .then(result => result.json())
                 .then(response => {
                     this.restaurants = response

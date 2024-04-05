@@ -9,8 +9,34 @@ def home(request):
 
 
 def api(request):
-    restaurants_objs = Restaurant.objects.all()
+    """
+    API endpoint to retrieve nearby restaurants based on user's pincode and radius (in kilometers).
 
+    This view function takes optional GET parameters:
+
+    * pincode: User's postal code to determine location.
+    * km: Radius in kilometers to search for restaurants around the user's location.
+
+    The view retrieves all restaurants from the database and iterates through them. 
+    For each restaurant, it calculates the distance from the user's location (if provided) 
+    using the `geopy.distance.great_circle` function.
+
+    The response is a JSON object containing a list of dictionaries, each representing a restaurant. 
+    The dictionary includes details like:
+
+        * name: Restaurant name (from model field)
+        * image: Restaurant image URL (from model field)
+        * description: Restaurant description (from model field)
+        * pincode: Restaurant's pincode (from model field)
+        * distance: Distance (in kilometers) between the user and the restaurant (if pincode provided)
+
+    If the 'km' parameter is provided, restaurants further than the specified radius are filtered out 
+    from the final response payload.
+
+    Returns:
+        A JsonResponse containing a list of dictionaries representing nearby restaurants.
+    """
+    restaurants_objs = Restaurant.objects.all()
     pincode = request.GET.get('pincode')
     km = request.GET.get('km')
     user_lat = None
@@ -35,7 +61,7 @@ def api(request):
   
         payload.append(result)
     
-        if km:
+        if km != 'any':
             if result['distance'] > int(km):
                 payload.pop()
              
